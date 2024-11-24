@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
+import vn.hoidanit.jobhunter.service.error.IdInvalidException;
 
 @RestController
 public class UserController {
@@ -30,6 +32,11 @@ public class UserController {
     public ResponseEntity<User> createNewUser(@RequestBody User createUser) {
         User newUser = this.userService.handleCreateUser(createUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    }
+
+    @ExceptionHandler(value = IdInvalidException.class)
+    public ResponseEntity<String> handleIdAlreadyExistsException(IdInvalidException idException) {
+        return ResponseEntity.badRequest().body(idException.getMessage());
     }
 
     @DeleteMapping("/users/{id}")
