@@ -28,11 +28,14 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(status);
     
-        // case error
+        // Handle Exception: RestResponse cannot be cast to class String
+        if (body instanceof String) {
+            return body;
+        }
+
         if (status >= 400) {
             return body;
         } else {
-            // case success
             res.setData(body);
             res.setMessage("Call api success");
         }
