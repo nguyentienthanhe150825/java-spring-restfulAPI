@@ -35,7 +35,10 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable("id") long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
+        if (id > 1500) {
+            throw new IdInvalidException("Id khong lon hon 1500");
+        }
         this.userService.handleDeleteUser(id);
         return ResponseEntity.ok("delete successful");
         // return ResponseEntity.status(HttpStatus.OK).body("delete successful");

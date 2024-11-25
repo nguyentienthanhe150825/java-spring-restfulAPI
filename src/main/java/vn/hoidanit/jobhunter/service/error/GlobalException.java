@@ -11,8 +11,9 @@ import vn.hoidanit.jobhunter.domain.RestResponse;
 public class GlobalException {
 
     // https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/ControllerAdvice.html
+    // 
     @ExceptionHandler(value = IdInvalidException.class)
-    public ResponseEntity<RestResponse<Object>> handleIdAlreadyExistsException(IdInvalidException idException) {
+    public ResponseEntity<RestResponse<Object>> handleIdException(IdInvalidException idException) {
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError(idException.getMessage());
