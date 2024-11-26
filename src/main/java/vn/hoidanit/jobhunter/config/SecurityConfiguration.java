@@ -22,9 +22,12 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // v6 . lamda
         http
+                .csrf(c -> c.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
+
+                .formLogin(formLogin -> formLogin.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
