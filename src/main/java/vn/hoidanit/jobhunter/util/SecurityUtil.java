@@ -38,7 +38,7 @@ public class SecurityUtil {
             .issuedAt(now)
             .expiresAt(validity)
             .subject(authentication.getName())
-            .claim("hoidanit", authentication)
+            .claim("authorities", authentication)
             .build();
 
         // Header: chỉ lưu thông tin thuật toán
