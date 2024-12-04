@@ -45,6 +45,7 @@ public class SecurityConfiguration {
         // v6 . lamda
         http
                 .csrf(c -> c.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/login").permitAll()
                         .anyRequest().authenticated())
