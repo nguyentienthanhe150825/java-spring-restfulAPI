@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.turkraft.springfilter.boot.Filter;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
@@ -60,20 +63,13 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<ResultPaginationDTO> getAllUsers(
-            @RequestParam("current") Optional<String> currentOptional,
-            @RequestParam("pageSize") Optional<String> pageSizeOptional) {
+    public ResponseEntity<ResultPaginationDTO> getAllUsers(@Filter Specification<User> spec, Pageable pageable) {
+        // đối với Spring, hỗ trợ out-of-the-box đối tượng Pageable, nếu truyền lên url:
+        // page, size, sort
 
-        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
-        String sPageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
-
-        int current = Integer.parseInt(sCurrent);
-        int pageSize = Integer.parseInt(sPageSize);
-
-        // current - 1: Tham số của hàm PageRequest.of là: pageNumber bắt đầu từ số 0
-        Pageable pageable = PageRequest.of(current - 1, pageSize);
-
-        return ResponseEntity.ok(this.userService.fetchAllUsers(pageable));
+        // Tài liệu filter theo thư viện Spring filter:
+        // https://github.com/turkraft/springfilter
+        return ResponseEntity.ok(this.userService.fetchAllUsers(spec, pageable));
     }
 
     @PutMapping("/users")

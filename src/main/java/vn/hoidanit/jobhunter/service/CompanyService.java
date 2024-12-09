@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
@@ -33,19 +34,19 @@ public class CompanyService {
     //     return listCompanies;
     // }
 
-    public ResultPaginationDTO fetchAllCompanies(Pageable pageable) {
-        Page<Company> pageCompany = this.companyRepository.findAll(pageable);
+    public ResultPaginationDTO fetchAllCompanies(Specification<Company> spec, Pageable pag) {
+        Page<Company> pCompany = this.companyRepository.findAll(spec, pag);
         ResultPaginationDTO result = new ResultPaginationDTO();
        Meta meta = new Meta();
 
-       meta.setPage(pageCompany.getNumber());
-        meta.setPageSize(pageCompany.getSize());
+       meta.setPage(pag.getPageNumber() + 1);
+        meta.setPageSize(pag.getPageSize());
 
-        meta.setPages(pageCompany.getTotalPages());
-        meta.setTotal(pageCompany.getTotalElements());
+        meta.setPages(pCompany.getTotalPages());
+        meta.setTotal(pCompany.getTotalElements());
 
         result.setMeta(meta);
-        result.setResult(pageCompany.getContent());
+        result.setResult(pCompany.getContent());
 
         return result;
     }
