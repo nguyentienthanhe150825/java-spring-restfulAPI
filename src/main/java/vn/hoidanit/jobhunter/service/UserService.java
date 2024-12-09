@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.Meta;
 import vn.hoidanit.jobhunter.domain.dto.ResCreateUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUpdateUserDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResUserDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.UserRepository;
@@ -81,9 +82,10 @@ public class UserService {
     public User handleUpdateUser(User requestUser) {
         User currentUser = this.fetchUserById(requestUser.getId());
         if (currentUser != null) {
+            currentUser.setAddress(requestUser.getAddress());
             currentUser.setName(requestUser.getName());
-            currentUser.setEmail(requestUser.getEmail());
-            currentUser.setPassword(requestUser.getPassword());
+            currentUser.setGender(requestUser.getGender());
+            currentUser.setAge(requestUser.getAge());
 
             // update
             currentUser = this.userRepository.save(currentUser);
@@ -119,6 +121,18 @@ public class UserService {
         res.setAge(user.getAge());
         res.setUpdatedAt(user.getUpdatedAt());
         res.setCreatedAt(user.getCreatedAt());
+        res.setGender(user.getGender());
+        res.setAddress(user.getAddress());
+
+        return res;
+    }
+
+    public ResUpdateUserDTO convertToResUpdateUserDTO(User user) {
+        ResUpdateUserDTO res = new ResUpdateUserDTO();
+        res.setId(user.getId());
+        res.setName(user.getName());
+        res.setAge(user.getAge());
+        res.setUpdatedAt(user.getUpdatedAt());
         res.setGender(user.getGender());
         res.setAddress(user.getAddress());
 

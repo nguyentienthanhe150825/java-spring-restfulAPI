@@ -22,6 +22,7 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.ResCreateUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUpdateUserDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResUserDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.UserService;
@@ -94,7 +95,16 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public ResponseEntity<User> updateUser(@RequestBody User requestUser) {
-        return ResponseEntity.ok(this.userService.handleUpdateUser(requestUser));
+    @ApiMessage("Update a user")
+    public ResponseEntity<ResUpdateUserDTO> updateUser(@RequestBody User requestUser) throws IdInvalidException {
+        User fetchUserById = this.userService.fetchUserById(requestUser.getId());
+        if (fetchUserById == null) {
+            throw new IdInvalidException("User với id = " + requestUser.getId() + " không tồn tại");
+        }
+
+        User userUpdate = this.userService.handleUpdateUser(requestUser);
+        
+        ResUpdateUserDTO res = this.userService.convertToResUpdateUserDTO(userUpdate);
+        return ResponseEntity.ok(res);
     }
 }
