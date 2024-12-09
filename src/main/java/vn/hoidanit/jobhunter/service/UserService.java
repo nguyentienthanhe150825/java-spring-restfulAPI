@@ -33,8 +33,10 @@ public class UserService {
 
     public User fetchUserById(long id) {
         Optional<User> userOptional = this.userRepository.findById(id);
-        User user = userOptional.isPresent() ? userOptional.get() : new User();
-        return user;
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        }
+        return null;
     }
 
     // public List<User> fetchAllUsers(Pageable pageable) {
