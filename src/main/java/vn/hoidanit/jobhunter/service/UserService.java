@@ -2,6 +2,7 @@ package vn.hoidanit.jobhunter.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,7 +60,21 @@ public class UserService {
         meta.setTotal(pUser.getTotalElements());
 
         result.setMeta(meta);
-        result.setResult(pUser.getContent());
+
+        // remove sensitive data
+        List<ResUserDTO> listUser = pUser.getContent()
+                .stream().map(item -> new ResUserDTO(
+                    item.getId(),
+                    item.getName(),
+                    item.getEmail(),
+                    item.getAge(),
+                    item.getAddress(),
+                    item.getGender(),
+                    item.getUpdatedAt(),
+                    item.getCreatedAt()))
+                .collect(Collectors.toList());
+
+        result.setResult(listUser);
         return result;
     }
 
