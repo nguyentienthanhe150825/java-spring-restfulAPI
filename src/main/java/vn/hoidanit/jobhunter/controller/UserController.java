@@ -23,6 +23,7 @@ import com.turkraft.springfilter.boot.Filter;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.UserService;
+import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
 @RestController
@@ -63,6 +64,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
+    @ApiMessage("fetch all users")
     public ResponseEntity<ResultPaginationDTO> getAllUsers(@Filter Specification<User> spec, Pageable pageable) {
         // đối với Spring, hỗ trợ out-of-the-box đối tượng Pageable, nếu truyền lên url:
         // page, size, sort
