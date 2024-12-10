@@ -1,5 +1,8 @@
 package vn.hoidanit.jobhunter.controller;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -28,6 +31,9 @@ public class AuthController {
     private final SecurityUtil securityUtil;
     private final UserService userService;
 
+    @Value("${hoidanit.jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenExpiration;
+
     public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil,
             UserService userService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
@@ -44,8 +50,8 @@ public class AuthController {
         // xác thực người dùng => cần viết hàm loadUserByUsername
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        // create token
-        String access_token = this.securityUtil.createToken(authentication);
+        // create access_token
+        String access_token = this.securityUtil.createAccessToken(authentication);
 
         // Set information to SecurityContextHolder
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -58,7 +64,7 @@ public class AuthController {
         if (currentUserDB != null) {
             // Set Data into Inner class: UserLogin
             UserLogin resUserLogin = res.new UserLogin();
-            
+
             resUserLogin.setId(currentUserDB.getId());
             resUserLogin.setEmail(currentUserDB.getEmail());
             resUserLogin.setName(currentUserDB.getName());
@@ -68,6 +74,26 @@ public class AuthController {
 
         res.setAccessToken(access_token);
 
-        return ResponseEntity.ok().body(res);
+        // create refresh_token
+        String refresh_token = this.securityUtil.createRefreshToken(loginDTO.getUsername(), res);
+
+        // Save refresh_token to database
+        this.userService.updateUserToken(refresh_token, loginDTO.getUsername());
+
+        // Create cookies
+        ResponseCookie resCookies = ResponseCookie
+                .from("refresh_token", refresh_token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenExpiration)
+                .build();
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, resCookies.toString()).body(res);
     }
 }
+
+// Create Cookies: https://reflectoring.io/spring-boot-cookies/
+// Document: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+// secure(true): cookies chỉ được sử dụng với https (thay vì http)
+// Khi sử dụng localhost: set secure = true hay false đều ko có tác dụng
