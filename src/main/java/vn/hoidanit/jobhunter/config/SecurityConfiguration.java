@@ -47,7 +47,7 @@ public class SecurityConfiguration {
                 .csrf(c -> c.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/api/v1/auth/login").permitAll()
+                        .requestMatchers("/", "/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
@@ -79,8 +79,7 @@ public class SecurityConfiguration {
 
     // Tài liệu Spring: https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html#oauth2resourceserver-jwt-authorization-extraction
     // Mục đích khi phân quyền sẽ ghi role vào token và khi có request gửi lên sever
-    // method: jwtAuthenticationConverter sẽ nạp quyền hạn người dùng vào Spring Security sau đó
-    // Spring Security sẽ lấy data gửi lên để phân quyền user
+    // method: jwtAuthenticationConverter sẽ nạp quyền hạn người dùng vào biến authorities trong SecurityContext
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();

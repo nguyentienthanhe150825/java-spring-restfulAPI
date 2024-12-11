@@ -146,4 +146,8 @@ public class UserService {
             this.userRepository.save(currentUser);
         }
     }
+
+    public User getUserByRefreshTokenAndEmail(String token, String email) {
+        return this.userRepository.findByRefreshTokenAndEmail(token, email);
+    }
 }
