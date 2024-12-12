@@ -21,6 +21,7 @@ import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.LoginDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResLoginDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResLoginDTO.UserGetAccount;
 import vn.hoidanit.jobhunter.domain.dto.ResLoginDTO.UserLogin;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
@@ -100,12 +101,14 @@ public class AuthController {
 
     @GetMapping("/auth/account")
     @ApiMessage("Get user information")
-    public ResponseEntity<ResLoginDTO.UserLogin> getAccount() {
+    public ResponseEntity<ResLoginDTO.UserGetAccount> getAccount() {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
 
         ResLoginDTO res = new ResLoginDTO();
         // Constructor Inner Class
         UserLogin userLogin = res.new UserLogin();
+
+        UserGetAccount userGetAccount = res.new UserGetAccount();
 
         User currentUserDB = this.userService.handleGetUserByUsername(email);
         if (currentUserDB != null) {
@@ -113,9 +116,12 @@ public class AuthController {
             userLogin.setId(currentUserDB.getId());
             userLogin.setEmail(currentUserDB.getEmail());
             userLogin.setName(currentUserDB.getName());
+
+            // Set userLogin into UserGetAccount
+            userGetAccount.setUser(userLogin);
         }
 
-        return ResponseEntity.ok().body(userLogin);
+        return ResponseEntity.ok().body(userGetAccount);
     }
 
     @GetMapping("/auth/refresh")
