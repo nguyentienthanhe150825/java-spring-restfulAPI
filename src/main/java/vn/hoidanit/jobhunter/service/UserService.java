@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.Meta;
 import vn.hoidanit.jobhunter.domain.response.ResCreateUserDTO;
@@ -21,12 +22,24 @@ import vn.hoidanit.jobhunter.repository.UserRepository;
 public class UserService {
     // Dependency Injection
     private final UserRepository userRepository;
+    private final CompanyService companyService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CompanyService companyService) {
         this.userRepository = userRepository;
+        this.companyService = companyService;
     }
 
     public User handleCreateUser(User user) {
+        // check company
+        if (user.getCompany() != null) {
+            Company company = this.companyService.fetchCompanyById(user.getCompany().getId());
+            if (company != null) {
+                user.setCompany(company);
+            } else {
+                user.setCompany(null);
+            }
+        }
+
         return this.userRepository.save(user);
     }
 
@@ -99,6 +112,8 @@ public class UserService {
 
     public ResCreateUserDTO convertToResCreateUserDTO(User user) {
         ResCreateUserDTO res = new ResCreateUserDTO();
+        ResCreateUserDTO.CompanyUser company = new ResCreateUserDTO.CompanyUser();
+
         res.setId(user.getId());
         res.setEmail(user.getEmail());
         res.setName(user.getName());
@@ -106,6 +121,13 @@ public class UserService {
         res.setCreatedAt(user.getCreatedAt());
         res.setGender(user.getGender());
         res.setAddress(user.getAddress());
+
+        if(user.getCompany() != null) {
+            company.setId(user.getCompany().getId());
+            company.setName(user.getCompany().getName());
+            res.setCompany(company);
+        }
+
         return res;
     }
 
