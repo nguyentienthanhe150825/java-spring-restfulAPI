@@ -76,19 +76,19 @@ public class UserService {
         result.setMeta(meta);
 
         // remove sensitive data
-        List<ResUserDTO> listUser = pUser.getContent()
-                .stream().map(item -> new ResUserDTO(
-                    item.getId(),
-                    item.getName(),
-                    item.getEmail(),
-                    item.getAge(),
-                    item.getAddress(),
-                    item.getGender(),
-                    item.getUpdatedAt(),
-                    item.getCreatedAt()))
-                .collect(Collectors.toList());
+        // List<ResUserDTO> listUser = pUser.getContent()
+        //         .stream().map(item -> new ResUserDTO(
+        //             item.getId(),
+        //             item.getName(),
+        //             item.getEmail(),
+        //             item.getAge(),
+        //             item.getAddress(),
+        //             item.getGender(),
+        //             item.getUpdatedAt(),
+        //             item.getCreatedAt()))
+        //         .collect(Collectors.toList());
 
-        result.setResult(listUser);
+        // result.setResult(listUser);
         return result;
     }
 
@@ -137,6 +137,8 @@ public class UserService {
 
     public ResUserDTO convertToResUserDTO(User user) {
         ResUserDTO res = new ResUserDTO();
+        ResUserDTO.CompanyUser company = new ResUserDTO.CompanyUser();
+
         res.setId(user.getId());
         res.setEmail(user.getEmail());
         res.setName(user.getName());
@@ -145,6 +147,12 @@ public class UserService {
         res.setCreatedAt(user.getCreatedAt());
         res.setGender(user.getGender());
         res.setAddress(user.getAddress());
+
+        if(user.getCompany() != null) {
+            company.setId(user.getCompany().getId());
+            company.setName(user.getCompany().getName());
+            res.setCompany(company);
+        }
 
         return res;
     }
