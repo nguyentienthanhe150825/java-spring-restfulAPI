@@ -76,19 +76,24 @@ public class UserService {
         result.setMeta(meta);
 
         // remove sensitive data
-        // List<ResUserDTO> listUser = pUser.getContent()
-        //         .stream().map(item -> new ResUserDTO(
-        //             item.getId(),
-        //             item.getName(),
-        //             item.getEmail(),
-        //             item.getAge(),
-        //             item.getAddress(),
-        //             item.getGender(),
-        //             item.getUpdatedAt(),
-        //             item.getCreatedAt()))
-        //         .collect(Collectors.toList());
+        List<ResUserDTO> listUser = pUser.getContent()
+                .stream().map(item -> new ResUserDTO(
+                    item.getId(),
+                    item.getName(),
+                    item.getEmail(),
+                    item.getAge(),
+                    item.getAddress(),
+                    item.getGender(),
+                    item.getUpdatedAt(),
+                    item.getCreatedAt(),
+                    new ResUserDTO.CompanyUser(
+                        item.getCompany() != null ? item.getCompany().getId() : 0,
+                        item.getCompany() != null ? item.getCompany().getName() : null
+                    )
+                ))
+                .collect(Collectors.toList());
 
-        // result.setResult(listUser);
+        result.setResult(listUser);
         return result;
     }
 
