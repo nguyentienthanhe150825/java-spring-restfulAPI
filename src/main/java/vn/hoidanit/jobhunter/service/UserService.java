@@ -105,6 +105,12 @@ public class UserService {
             currentUser.setGender(requestUser.getGender());
             currentUser.setAge(requestUser.getAge());
 
+            // check company: If user change company
+            if (requestUser.getCompany() != null) {
+                Company companyOptional = this.companyService.fetchCompanyById(requestUser.getCompany().getId());
+                currentUser.setCompany(companyOptional != null ? companyOptional : null);
+            } 
+
             // update
             currentUser = this.userRepository.save(currentUser);
         }
@@ -164,6 +170,13 @@ public class UserService {
 
     public ResUpdateUserDTO convertToResUpdateUserDTO(User user) {
         ResUpdateUserDTO res = new ResUpdateUserDTO();
+        ResUpdateUserDTO.CompanyUser com = new ResUpdateUserDTO.CompanyUser();
+        if (user.getCompany() != null) {
+            com.setId(user.getCompany().getId());
+            com.setName(user.getCompany().getName());
+            res.setCompany(com);
+        }
+
         res.setId(user.getId());
         res.setName(user.getName());
         res.setAge(user.getAge());
