@@ -23,6 +23,7 @@ import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
+import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -59,7 +60,11 @@ public class CompanyController {
     }
 
     @DeleteMapping("/companies/{id}")
-    public ResponseEntity<Void> deleteCompany(@PathVariable("id") long id) {
+    public ResponseEntity<Void> deleteCompany(@PathVariable("id") long id) throws IdInvalidException {
+        Company company = this.companyService.fetchCompanyById(id);
+        if (company == null) {
+            throw new IdInvalidException("Company với id = " + id + " không tồn tại");
+        }
         this.companyService.handleDeleteCompany(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
