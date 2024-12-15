@@ -93,6 +93,11 @@ public class UserService {
                 ))
                 .collect(Collectors.toList());
 
+            // Refactoring code
+            // List<ResUserDTO> listUser = pUser.getContent()
+            //     .stream().map(this::convertToResUserDTO)
+            //     .collect(Collectors.toList());
+
         result.setResult(listUser);
         return result;
     }
