@@ -2,9 +2,14 @@ package vn.hoidanit.jobhunter.service;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.Skill;
+import vn.hoidanit.jobhunter.domain.response.Meta;
+import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.SkillRepository;
 
 @Service
@@ -34,6 +39,24 @@ public class SkillService {
     public Skill updateSkill(Skill currentSkill, Skill requestSkill) {
         currentSkill.setName(requestSkill.getName());
         return this.skillRepository.save(currentSkill);
+    }
+
+    public ResultPaginationDTO fetchAllSkills(Specification<Skill> spec, Pageable pageable) {
+        Page<Skill> pageSkill = this.skillRepository.findAll(spec, pageable);
+        
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+
+        meta.setPages(pageSkill.getTotalPages());
+        meta.setTotal(pageSkill.getTotalElements());
+
+        result.setMeta(meta);
+        result.setResult(pageSkill.getContent());
+
+        return result;
     }
 
 }
