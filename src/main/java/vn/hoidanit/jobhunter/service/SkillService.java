@@ -59,4 +59,13 @@ public class SkillService {
         return result;
     }
 
+    public void deleteSkill(long id) {
+        // delete job (inside job_skill table)
+       Skill currentSkill = this.fetchSkillById(id);
+       currentSkill.getJobs().forEach(job -> job.getSkills().remove(currentSkill));
+
+       // delete skill
+       this.skillRepository.delete(currentSkill);
+    }
+
 }
