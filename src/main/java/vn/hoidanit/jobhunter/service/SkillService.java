@@ -31,4 +31,9 @@ public class SkillService {
         return this.skillRepository.save(reqSkill);
     }
 
+    public Skill updateSkill(Skill currentSkill, Skill requestSkill) {
+        currentSkill.setName(requestSkill.getName());
+        return this.skillRepository.save(currentSkill);
+    }
+
 }
