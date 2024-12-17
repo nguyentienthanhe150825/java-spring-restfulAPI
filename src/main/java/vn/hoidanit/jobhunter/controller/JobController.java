@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,5 +60,17 @@ public class JobController {
         }
         this.jobService.deleteJob(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @GetMapping("/jobs/{id}")
+    @ApiMessage("Get a job by id")
+    public ResponseEntity<Job> getJobById(@PathVariable("id") long id) throws IdInvalidException {
+        // Check Job by id
+        Optional<Job> jobOptional = this.jobService.fetchJobById(id);
+        if (!jobOptional.isPresent()) {
+            throw new IdInvalidException("Job not found");
+        }
+        Job currentJob = jobOptional.get();
+        return ResponseEntity.status(HttpStatus.OK).body(currentJob);
     }
 }
