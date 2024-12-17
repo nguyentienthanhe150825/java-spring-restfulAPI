@@ -4,11 +4,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.Job;
 import vn.hoidanit.jobhunter.domain.Skill;
+import vn.hoidanit.jobhunter.domain.response.Meta;
 import vn.hoidanit.jobhunter.domain.response.ResCreateJobDTO;
+import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.domain.response.job.ResUpdateJobDTO;
 import vn.hoidanit.jobhunter.repository.JobRepository;
 import vn.hoidanit.jobhunter.repository.SkillRepository;
@@ -123,6 +128,24 @@ public class JobService {
 
     public void deleteJob(long id) {
         this.jobRepository.deleteById(id);
+    }
+
+    public ResultPaginationDTO fetchAllSkills(Specification<Job> spec, Pageable pageable) {
+        Page<Job> pageJob = this.jobRepository.findAll(spec, pageable);
+
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+
+        meta.setPages(pageJob.getTotalPages());
+        meta.setTotal(pageJob.getTotalElements());
+
+        result.setMeta(meta);
+        result.setResult(pageJob.getContent());
+
+        return result;
     }
 
 }
