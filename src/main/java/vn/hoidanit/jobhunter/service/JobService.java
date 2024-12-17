@@ -121,4 +121,8 @@ public class JobService {
         return dto;
     }
 
+    public void deleteJob(long id) {
+        this.jobRepository.deleteById(id);
+    }
+
 }
