@@ -1,5 +1,6 @@
 package vn.hoidanit.jobhunter.controller;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,7 @@ public class FileController {
     }
 
     @PostMapping("/files")
-    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("folder") String folder) throws URISyntaxException {
+    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("folder") String folder) throws URISyntaxException, IOException {
         // validate
 
 
@@ -33,6 +34,7 @@ public class FileController {
         this.fileService.createDirectory(baseURI + folder);
 
         // store file
+        String uploadFile = this.fileService.store(baseURI + folder, file);
 
         return file.getOriginalFilename();
     }
