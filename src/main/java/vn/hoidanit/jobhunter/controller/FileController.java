@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.hoidanit.jobhunter.domain.response.file.ResUploadFileDTO;
 import vn.hoidanit.jobhunter.service.FileService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
+import vn.hoidanit.jobhunter.util.error.StorageException;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -31,9 +32,14 @@ public class FileController {
 
     @PostMapping("/files")
     @ApiMessage("Upload single file")
-    public ResponseEntity<ResUploadFileDTO> upload(@RequestParam("file") MultipartFile file, @RequestParam("folder") String folder) throws URISyntaxException, IOException {
-        // validate
+    public ResponseEntity<ResUploadFileDTO> upload(@RequestParam(name = "file", required = false) MultipartFile file, @RequestParam("folder") String folder) throws URISyntaxException, IOException, StorageException {
+        // validate: This is a security check
+        // check 1: check file is empty and check does not param "file"
+        if (file == null || file.isEmpty()) {
+            throw new StorageException("File is empty. Please upload a file.");
+        }
 
+        // check 2: 
 
         // create a directory if not exist
         this.fileService.createDirectory(baseURI + folder);
