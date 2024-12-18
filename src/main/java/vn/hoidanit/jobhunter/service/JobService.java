@@ -9,12 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.Job;
 import vn.hoidanit.jobhunter.domain.Skill;
 import vn.hoidanit.jobhunter.domain.response.Meta;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.domain.response.job.ResCreateJobDTO;
 import vn.hoidanit.jobhunter.domain.response.job.ResUpdateJobDTO;
+import vn.hoidanit.jobhunter.repository.CompanyRepository;
 import vn.hoidanit.jobhunter.repository.JobRepository;
 import vn.hoidanit.jobhunter.repository.SkillRepository;
 
@@ -22,10 +24,12 @@ import vn.hoidanit.jobhunter.repository.SkillRepository;
 public class JobService {
     private final JobRepository jobRepository;
     private final SkillRepository skillRepository;
+    private final CompanyRepository companyRepository;
 
-    public JobService(JobRepository jobRepository, SkillRepository skillRepository) {
+    public JobService(JobRepository jobRepository, SkillRepository skillRepository, CompanyRepository companyRepository) {
         this.jobRepository = jobRepository;
         this.skillRepository = skillRepository;
+        this.companyRepository = companyRepository;
     }
 
     public Optional<Job> fetchJobById(long id) {
@@ -86,6 +90,14 @@ public class JobService {
 
             List<Skill> listSkills = this.skillRepository.findByIdIn(listIdSkill);
             jobUpdate.setSkills(listSkills);
+        }
+
+        // check company
+        if (requestJob.getCompany() != null) {
+            Optional<Company> compOptional = this.companyRepository.findById(requestJob.getCompany().getId());
+            if (compOptional.isPresent()) {
+                jobUpdate.setCompany(compOptional.get());
+            }
         }
 
         // update correct info

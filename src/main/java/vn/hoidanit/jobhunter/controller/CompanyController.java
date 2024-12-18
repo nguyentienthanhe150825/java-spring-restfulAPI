@@ -68,4 +68,16 @@ public class CompanyController {
         this.companyService.handleDeleteCompany(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
+    @GetMapping("/companies/{id}")
+    @ApiMessage("fetch company by id")
+    public ResponseEntity<Company> fetchCompanyById(@PathVariable("id") long id) throws IdInvalidException {
+        Company company = this.companyService.fetchCompanyById(id);
+        
+        if (company == null) {
+            throw new IdInvalidException("Company with id = " + id + " not exist");
+        }
+        
+        return ResponseEntity.status(HttpStatus.OK).body(company);
+    }
 }

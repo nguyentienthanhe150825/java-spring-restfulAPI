@@ -31,6 +31,7 @@ public class Resume {
     @NotBlank(message = "email không được để trống")
     private String email;
 
+    @NotBlank(message = "url không được để trống (upload cv chưa thành công)")
     private String url;
 
     @Enumerated(EnumType.STRING)

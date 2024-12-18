@@ -24,6 +24,7 @@ public class ResFetchResumeDTO {
     private String createdBy;
     private String updatedBy;
 
+    private String companyName;
     private UserResume user;
     private JobResume job;
 
