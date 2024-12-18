@@ -9,6 +9,7 @@ import vn.hoidanit.jobhunter.domain.Job;
 import vn.hoidanit.jobhunter.domain.Resume;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.resume.ResCreateResumeDTO;
+import vn.hoidanit.jobhunter.domain.response.resume.ResUpdateResumeDTO;
 import vn.hoidanit.jobhunter.repository.JobRepository;
 import vn.hoidanit.jobhunter.repository.ResumeRepository;
 import vn.hoidanit.jobhunter.repository.UserRepository;
@@ -24,6 +25,10 @@ public class ResumeService {
         this.resumeRepository = resumeRepository;
         this.userRepository = userRepository;
         this.jobRepository = jobRepository;
+    }
+
+    public Optional<Resume> fetchResumeById(long id) {
+        return this.resumeRepository.findById(id);
     }
 
     public boolean checkResumeExistByUserAndJob(Resume requestResume) {
@@ -58,4 +63,20 @@ public class ResumeService {
 
         return dto;
     }
+
+    public ResUpdateResumeDTO updateStatusResume(Resume currentResume, Resume requestResume) {
+        // set status current resume
+        currentResume.setStatus(requestResume.getStatus());
+        
+        // update database
+        this.resumeRepository.save(currentResume);
+        
+        // convert Resume Object into DTO
+        ResUpdateResumeDTO dto = new ResUpdateResumeDTO();
+        dto.setUpdatedAt(currentResume.getUpdatedAt());
+        dto.setUpdatedBy(currentResume.getUpdatedBy());
+
+        return dto;
+    }
+
 }
