@@ -9,6 +9,7 @@ import vn.hoidanit.jobhunter.domain.Job;
 import vn.hoidanit.jobhunter.domain.Resume;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.response.resume.ResCreateResumeDTO;
+import vn.hoidanit.jobhunter.domain.response.resume.ResFetchResumeDTO;
 import vn.hoidanit.jobhunter.domain.response.resume.ResUpdateResumeDTO;
 import vn.hoidanit.jobhunter.repository.JobRepository;
 import vn.hoidanit.jobhunter.repository.ResumeRepository;
@@ -81,6 +82,26 @@ public class ResumeService {
 
     public void deleteResume(long id) {
         this.resumeRepository.deleteById(id);
+    }
+
+    public ResFetchResumeDTO convertToResFetchResumeDTO(Resume resume) {
+        ResFetchResumeDTO dto = new ResFetchResumeDTO();
+        dto.setId(resume.getId());
+        dto.setEmail(resume.getEmail());
+        dto.setUrl(resume.getUrl());
+        dto.setStatus(resume.getStatus());
+        dto.setCreatedAt(resume.getCreatedAt());
+        dto.setCreatedBy(resume.getCreatedBy());
+        dto.setUpdatedAt(resume.getUpdatedAt());
+        dto.setUpdatedBy(resume.getUpdatedBy());
+
+        ResFetchResumeDTO.UserResume user = new ResFetchResumeDTO.UserResume(resume.getUser().getId(), resume.getUser().getName());
+        dto.setUser(user);
+
+        ResFetchResumeDTO.JobResume job = new ResFetchResumeDTO.JobResume(resume.getJob().getId(), resume.getJob().getName());
+        dto.setJob(job);
+    
+        return dto;
     }
 
 }
