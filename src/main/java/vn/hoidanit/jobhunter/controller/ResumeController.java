@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,8 +53,21 @@ public class ResumeController {
         if (!resumeOptional.isPresent()) {
             throw new IdInvalidException("Resume with id = " + requestResume.getId() + " not exist");
         }
-        
+
         ResUpdateResumeDTO response = this.resumeService.updateStatusResume(resumeOptional.get(), requestResume);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @DeleteMapping("/resumes/{id}")
+    @ApiMessage("Delete a resume by id")
+    public ResponseEntity<Void> deleteResume(@PathVariable("id") long id) throws IdInvalidException {
+        // check resume id
+        Optional<Resume> resumeOptional = this.resumeService.fetchResumeById(id);
+        if (!resumeOptional.isPresent()) {
+            throw new IdInvalidException("Resume with id = " + id + " not exist");
+        }
+     
+        this.resumeService.deleteResume(id);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
