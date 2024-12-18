@@ -130,7 +130,7 @@ public class JobService {
         this.jobRepository.deleteById(id);
     }
 
-    public ResultPaginationDTO fetchAllSkills(Specification<Job> spec, Pageable pageable) {
+    public ResultPaginationDTO fetchAllJobs(Specification<Job> spec, Pageable pageable) {
         Page<Job> pageJob = this.jobRepository.findAll(spec, pageable);
 
         ResultPaginationDTO result = new ResultPaginationDTO();

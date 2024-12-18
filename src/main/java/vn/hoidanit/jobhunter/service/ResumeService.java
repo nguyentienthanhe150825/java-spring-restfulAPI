@@ -1,13 +1,20 @@
 package vn.hoidanit.jobhunter.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Job;
 import vn.hoidanit.jobhunter.domain.Resume;
 import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.domain.response.Meta;
+import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.domain.response.resume.ResCreateResumeDTO;
 import vn.hoidanit.jobhunter.domain.response.resume.ResFetchResumeDTO;
 import vn.hoidanit.jobhunter.domain.response.resume.ResUpdateResumeDTO;
@@ -102,6 +109,30 @@ public class ResumeService {
         dto.setJob(job);
     
         return dto;
+    }
+
+    public ResultPaginationDTO fetchAllResumes(Specification<Resume> spec, Pageable pageable) {
+        Page<Resume> pageResume = this.resumeRepository.findAll(spec, pageable);
+        
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+
+        meta.setPages(pageResume.getTotalPages());
+        meta.setTotal(pageResume.getTotalElements());
+
+        result.setMeta(meta);
+        
+        // convert Resume Objct into DTO
+        List<ResFetchResumeDTO> listResume = pageResume.getContent()
+                .stream().map(this::convertToResFetchResumeDTO)
+                .collect(Collectors.toList());
+        
+        result.setResult(listResume);
+
+        return result;
     }
 
 }

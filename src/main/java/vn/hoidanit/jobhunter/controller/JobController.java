@@ -82,7 +82,7 @@ public class JobController {
     @GetMapping("/jobs")
     @ApiMessage("Get job with pagination")
     public ResponseEntity<ResultPaginationDTO> getAllJobs(@Filter Specification<Job> spec, Pageable pageable) {
-        ResultPaginationDTO listJobs = this.jobService.fetchAllSkills(spec, pageable);
+        ResultPaginationDTO listJobs = this.jobService.fetchAllJobs(spec, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(listJobs);
     }
 }
