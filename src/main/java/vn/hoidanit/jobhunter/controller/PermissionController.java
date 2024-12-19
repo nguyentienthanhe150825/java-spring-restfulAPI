@@ -4,7 +4,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,5 +73,15 @@ public class PermissionController {
         return ResponseEntity.status(HttpStatus.OK).body(listPermissions);
     }
     
-    
+    @DeleteMapping("/permissions/{id}")
+    @ApiMessage("Delete a permission")
+    public ResponseEntity<Void> deletePermission(@PathVariable("id") long id) throws IdInvalidException {
+        // check id exist
+        Permission currentPermission = this.permissionService.fetchPermissionById(id);
+        if (currentPermission == null) {
+            throw new IdInvalidException("Permission với id = " + id + " không tồn tại");
+        }
+        this.permissionService.deletePermission(id);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
 }
