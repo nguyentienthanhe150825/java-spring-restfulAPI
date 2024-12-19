@@ -1,15 +1,21 @@
 package vn.hoidanit.jobhunter.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.turkraft.springfilter.boot.Filter;
+
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Role;
+import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.RoleService;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
@@ -57,4 +63,13 @@ public class RoleController {
         Role updateRole = this.roleService.updateRole(requestRole, currentRole);
         return ResponseEntity.status(HttpStatus.OK).body(updateRole);
     }
+
+    @GetMapping("/roles")
+    @ApiMessage("Get role with pagination")
+    public ResponseEntity<ResultPaginationDTO> getAllRoles(@Filter Specification<Role> spec, Pageable pageable) {
+        ResultPaginationDTO listRoles = this.roleService.fetchAllRoles(spec, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(listRoles);
+    }
+
+
 }

@@ -4,11 +4,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Permission;
 import vn.hoidanit.jobhunter.domain.Role;
+import vn.hoidanit.jobhunter.domain.response.Meta;
+import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.PermissionRepository;
 import vn.hoidanit.jobhunter.repository.RoleRepository;
 
@@ -72,5 +77,22 @@ public class RoleService {
         currentRole = this.roleRepository.save(currentRole);
 
         return currentRole;
+    }
+
+    public ResultPaginationDTO fetchAllRoles(Specification<Role> spec, Pageable pageable) {
+        Page<Role> pageRole = this.roleRepository.findAll(spec, pageable);
+        ResultPaginationDTO result = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+
+        meta.setPages(pageRole.getTotalPages());
+        meta.setTotal(pageRole.getTotalElements());
+
+        result.setMeta(meta);
+        result.setResult(pageRole.getContent());
+
+        return result;
     }
 }
