@@ -84,28 +84,10 @@ public class UserService {
 
         result.setMeta(meta);
 
-        // remove sensitive data
+        // Refactoring code
         List<ResUserDTO> listUser = pUser.getContent()
-                .stream().map(item -> new ResUserDTO(
-                    item.getId(),
-                    item.getName(),
-                    item.getEmail(),
-                    item.getAge(),
-                    item.getAddress(),
-                    item.getGender(),
-                    item.getUpdatedAt(),
-                    item.getCreatedAt(),
-                    new ResUserDTO.CompanyUser(
-                        item.getCompany() != null ? item.getCompany().getId() : 0,
-                        item.getCompany() != null ? item.getCompany().getName() : null
-                    )
-                ))
+                .stream().map(item -> this.convertToResUserDTO(item))
                 .collect(Collectors.toList());
-
-            // Refactoring code
-            // List<ResUserDTO> listUser = pUser.getContent()
-            //     .stream().map(this::convertToResUserDTO)
-            //     .collect(Collectors.toList());
 
         result.setResult(listUser);
         return result;
@@ -176,6 +158,7 @@ public class UserService {
     public ResUserDTO convertToResUserDTO(User user) {
         ResUserDTO res = new ResUserDTO();
         ResUserDTO.CompanyUser company = new ResUserDTO.CompanyUser();
+        ResUserDTO.RoleUser role = new ResUserDTO.RoleUser();
 
         res.setId(user.getId());
         res.setEmail(user.getEmail());
@@ -186,10 +169,16 @@ public class UserService {
         res.setGender(user.getGender());
         res.setAddress(user.getAddress());
 
-        if(user.getCompany() != null) {
+        if (user.getCompany() != null) {
             company.setId(user.getCompany().getId());
             company.setName(user.getCompany().getName());
             res.setCompany(company);
+        }
+
+        if (user.getRole() != null) {
+            role.setId(user.getRole().getId());
+            role.setName(user.getRole().getName());
+            res.setRole(role);
         }
 
         return res;
