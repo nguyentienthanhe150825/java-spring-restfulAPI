@@ -47,7 +47,13 @@ public class SecurityUtil {
     @Value("${hoidanit.jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
 
-    public String createAccessToken(String email, ResLoginDTO.UserLogin resLoginDTO) {
+    public String createAccessToken(String email, ResLoginDTO dto) {
+        // token save infor: id, name, email (does not role)
+        ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
+        userToken.setId(dto.getUser().getId());
+        userToken.setEmail(dto.getUser().getEmail());
+        userToken.setName(dto.getUser().getName());
+
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
@@ -62,7 +68,7 @@ public class SecurityUtil {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
-                .claim("user", resLoginDTO)
+                .claim("user", userToken)  // Sử dụng đối tượng đơn giản gồm các trường (long, String, int, double) để tạo JWT payload
                 .claim("permission", listAuthority)
                 .build();
 
@@ -71,7 +77,13 @@ public class SecurityUtil {
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
 
-    public String createRefreshToken(String email, ResLoginDTO resLoginDTO) {
+    public String createRefreshToken(String email, ResLoginDTO dto) {
+        // token save infor: id, name, email (does not role)
+        ResLoginDTO.UserInsideToken userToken = new ResLoginDTO.UserInsideToken();
+        userToken.setId(dto.getUser().getId());
+        userToken.setEmail(dto.getUser().getEmail());
+        userToken.setName(dto.getUser().getName());
+        
         Instant now = Instant.now();
         Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
 
@@ -80,7 +92,7 @@ public class SecurityUtil {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
-                .claim("user", resLoginDTO.getUser())
+                .claim("user", userToken) // Sử dụng đối tượng đơn giản gồm các trường (long, String, int, double) để tạo JWT payload
                 .build();
 
         // Header: chỉ lưu thông tin thuật toán

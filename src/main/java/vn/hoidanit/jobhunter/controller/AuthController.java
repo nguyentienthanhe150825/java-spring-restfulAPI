@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import vn.hoidanit.jobhunter.domain.Role;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.request.ReqLoginDTO;
 import vn.hoidanit.jobhunter.domain.response.ResLoginDTO;
@@ -72,12 +73,13 @@ public class AuthController {
             resUserLogin.setId(currentUserDB.getId());
             resUserLogin.setEmail(currentUserDB.getEmail());
             resUserLogin.setName(currentUserDB.getName());
+            resUserLogin.setRole(currentUserDB.getRole());
 
             res.setUser(resUserLogin);
         }
 
         // create access_token
-        String access_token = this.securityUtil.createAccessToken(authentication.getName(), res.getUser());
+        String access_token = this.securityUtil.createAccessToken(authentication.getName(), res);
 
         res.setAccessToken(access_token);
 
@@ -116,6 +118,7 @@ public class AuthController {
             userLogin.setId(currentUserDB.getId());
             userLogin.setEmail(currentUserDB.getEmail());
             userLogin.setName(currentUserDB.getName());
+            userLogin.setRole(currentUserDB.getRole());
 
             // Set userLogin into UserGetAccount
             userGetAccount.setUser(userLogin);
@@ -148,17 +151,18 @@ public class AuthController {
         User currentUserDB = this.userService.handleGetUserByUsername(email);
         if (currentUserDB != null) {
             // Set Data into Inner class: UserLogin
-            UserLogin resUserLogin = res.new UserLogin();
+            UserLogin userLogin = res.new UserLogin();
 
-            resUserLogin.setId(currentUserDB.getId());
-            resUserLogin.setEmail(currentUserDB.getEmail());
-            resUserLogin.setName(currentUserDB.getName());
+            userLogin.setId(currentUserDB.getId());
+            userLogin.setEmail(currentUserDB.getEmail());
+            userLogin.setName(currentUserDB.getName());
+            userLogin.setRole(currentUser.getRole());
 
-            res.setUser(resUserLogin);
+            res.setUser(userLogin);
         }
 
         // create new_access_token
-        String new_access_token = this.securityUtil.createAccessToken(email, res.getUser());
+        String new_access_token = this.securityUtil.createAccessToken(email, res);
 
         res.setAccessToken(new_access_token);
 
