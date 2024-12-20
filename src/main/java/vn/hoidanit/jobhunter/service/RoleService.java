@@ -1,5 +1,6 @@
 package vn.hoidanit.jobhunter.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,9 +36,16 @@ public class RoleService {
     public Role handleCreateRole(Role requestRole) {
         // if permission exist
         if (requestRole.getPermissions() != null) {
-            List<Long> listPermissionId = requestRole.getPermissions()
-                    .stream().map(item -> item.getId())
-                    .collect(Collectors.toList());
+            // List<Long> listPermissionId = requestRole.getPermissions()
+            //         .stream().map(item -> item.getId())
+            //         .collect(Collectors.toList());
+            
+            List<Long> listPermissionId = new ArrayList<>();
+            List<Permission> permissions = requestRole.getPermissions();
+
+            for (int i = 0; i < permissions.size(); i++) {
+                listPermissionId.add(permissions.get(i).getId());
+            }
 
             List<Permission> listPermissions = this.permissionRepository.findByIdIn(listPermissionId);
 
