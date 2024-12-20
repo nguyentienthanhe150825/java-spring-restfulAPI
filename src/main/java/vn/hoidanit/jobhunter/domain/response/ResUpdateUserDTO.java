@@ -17,10 +17,19 @@ public class ResUpdateUserDTO {
     private Instant updatedAt;
 
     private CompanyUser company;
+      
+    private RoleUser role;
 
     @Getter
     @Setter
     public static class CompanyUser {
+        private long id;
+        private String name;
+    }
+
+    @Getter
+    @Setter
+    public static class RoleUser {
         private long id;
         private String name;
     }
