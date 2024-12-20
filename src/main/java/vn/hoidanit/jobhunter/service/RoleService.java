@@ -68,9 +68,16 @@ public class RoleService {
     public Role updateRole(Role requestRole, Role currentRole) {
         // if permission exist
         if (requestRole.getPermissions() != null) {
-            List<Long> listPermissionId = requestRole.getPermissions()
-                    .stream().map(item -> item.getId())
-                    .collect(Collectors.toList());
+            // List<Long> listPermissionId = requestRole.getPermissions()
+            //         .stream().map(item -> item.getId())
+            //         .collect(Collectors.toList());
+            
+            List<Long> listPermissionId = new ArrayList<>();
+            List<Permission> permissions = requestRole.getPermissions();
+            
+            for (Permission p : permissions) {
+                listPermissionId.add(p.getId());
+            }
 
             List<Permission> listPermissions = this.permissionRepository.findByIdIn(listPermissionId);
             
