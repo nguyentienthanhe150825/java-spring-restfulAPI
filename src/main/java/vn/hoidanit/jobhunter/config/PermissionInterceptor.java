@@ -62,3 +62,29 @@ public class PermissionInterceptor implements HandlerInterceptor {
     // https://www.baeldung.com/spring-mvc-handlerinterceptor
     // Request -> Spring Security -> Interceptor -> Controller -> Service...
 }
+
+
+// Explain: Transactional có thể gây lỗi: LazyInitializationException
+// Hibernate Session: đại diện cho 1 phiên làm việc thao tác giữa ứng dụng và cơ sở dữ liệu
+// Chu kỳ của 1 Hibernate Session:
+// Mở: Khi thực hiện thao tác với cơ sở dữ liệu
+// Mở: Hibernate Session hoạt động trong phạm vi của Transaction
+// Đóng: Sau khi transaction kết thúc, Session sẽ đóng
+
+// Sau khi Session đóng sẽ không thể truy cập đươc vào Lazy Loaded
+// Khi đoạn code vào tới Controller -> Service -> repository thì
+// Mỗi method sẽ được Java Spring tự động tạo 1 Transaction chứa Hibernate Session sẽ luôn được hoạt động xuyên suốt 1 method đó
+
+// Nhưng khi ở Interceptor (Java Spring sẽ ko tự động tạo transaction để duy trì Hibernate Session)
+// -> Vì vậy Hibernate Session MỞ khi truy vấn this.userService.handleGetUserByUsername(email) thực hiện (truy vấn lần 1)
+// -> Sau đó truy vấn hoàn tất, Hibernate Session sẽ đóng do ko có transaction
+// -> có nghĩa là Hibernate Session sẽ đóng sau khi thực hiện đoạn code: handleGetUserByUsername
+
+// -> Nên khi đoạn code role.getPermissions() được thực thi
+// -> tức là đang cố truy cập vào cơ sở dữ liệu (truy vấn lần 2) dựa vào Role để lấy Permissions
+// -> nhưng mối quan hệ ràng buộc giữa Role và Permission là: FetchType.LAZY 
+// => sẽ xảy ra lỗi LazyInitializationException (do Hibernate Session đã đóng)
+
+
+// =====> Giải pháp: @Transactional: 
+// Tạo 1 Hibernate Session duy trì xuyên suốt method preHandle (và có thể truy vấn tới database nhiều lần mà ko sợ Hibernate Session đóng)
