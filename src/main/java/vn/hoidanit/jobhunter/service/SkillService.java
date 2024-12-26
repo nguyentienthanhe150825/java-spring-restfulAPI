@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.Skill;
+import vn.hoidanit.jobhunter.domain.Subscriber;
 import vn.hoidanit.jobhunter.domain.response.Meta;
 import vn.hoidanit.jobhunter.domain.response.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.repository.SkillRepository;
@@ -63,6 +64,11 @@ public class SkillService {
         // delete job (inside job_skill table)
        Skill currentSkill = this.fetchSkillById(id);
        currentSkill.getJobs().forEach(job -> job.getSkills().remove(currentSkill));
+
+       // delete subscriber (inside subscriber_skill table)
+        for (Subscriber subscriber : currentSkill.getSubscribers()) {
+            subscriber.getSkills().remove(currentSkill);
+        }
 
        // delete skill
        this.skillRepository.delete(currentSkill);
