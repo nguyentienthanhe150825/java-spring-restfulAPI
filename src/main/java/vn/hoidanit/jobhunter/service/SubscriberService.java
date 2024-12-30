@@ -35,6 +35,10 @@ public class SubscriberService {
         return this.subscriberRepository.existsByEmail(email);
     }
 
+    public Subscriber findSubscriberByEmail(String email) {
+        return this.subscriberRepository.findByEmail(email);
+    }
+
     public Subscriber fetchSubscriberById (long id) {
         Optional<Subscriber> subscriberOptional = this.subscriberRepository.findById(id);
         if (subscriberOptional.isPresent()) {
