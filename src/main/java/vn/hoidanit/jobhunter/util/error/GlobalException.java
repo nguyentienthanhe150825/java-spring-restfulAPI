@@ -20,6 +20,18 @@ import vn.hoidanit.jobhunter.domain.response.RestResponse;
 public class GlobalException {
 
     // https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/ControllerAdvice.html
+    
+    // Handle all exception
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<RestResponse<Object>> handleAllException(Exception ex) {
+        RestResponse<Object> res = new RestResponse<Object>();
+        res.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        res.setMessage(ex.getMessage());
+        res.setError("Internal Server Error");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+    }
+
+
     @ExceptionHandler(value = {
             UsernameNotFoundException.class,
             BadCredentialsException.class,
