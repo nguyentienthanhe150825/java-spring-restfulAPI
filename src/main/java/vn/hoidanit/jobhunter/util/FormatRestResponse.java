@@ -35,6 +35,12 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
             return body;
         }
 
+        // Handle Exception: RestResponse cannot be cast to class "/v3/api-docs" and "/swagger-ui"
+        String path = request.getURI().getPath();
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+            return body;
+        }
+
         if (status >= 400) {
             return body;
         } else {
